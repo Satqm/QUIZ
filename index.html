@@ -136,13 +136,11 @@
 <body>
 
   <div class="quiz-container">
-    <!-- 1. Loading State -->
     <div id="loading-screen">
       <h2>Fetching CA Questions...</h2>
       <p>Connecting to Google Sheets</p>
     </div>
 
-    <!-- 2. Active Quiz State -->
     <div id="quiz-screen">
       <div class="header">
         <span id="question-tracker">Question 1 of X</span>
@@ -150,12 +148,11 @@
       </div>
       <div class="question" id="question-text">Loading question...</div>
       <div class="options-grid" id="options-container">
-        <!-- Buttons are injected here by JavaScript -->
+        <!-- Buttons injected here -->
       </div>
       <button id="next-btn">Next Question</button>
     </div>
 
-    <!-- 3. Final Results State -->
     <div id="result-screen">
       <div class="result-content">
         <h2>Mock Test Complete!</h2>
@@ -167,14 +164,13 @@
   </div>
 
   <script>
-    // Your exact Google Sheet API URL
+    // Your specific CSV link
     const API_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRAy0cnPqv6k1ckLp9wp9fRwh3kiMxZEHkEKTzPfDOKXOdfbxS3TdCWXzJZVTKydHUBEenaeUBYJsst/pub?output=csv';
     
     let questionsData = [];
     let currentIndex = 0;
     let score = 0;
 
-    // DOM Elements
     const loadingScreen = document.getElementById('loading-screen');
     const quizScreen = document.getElementById('quiz-screen');
     const resultScreen = document.getElementById('result-screen');
@@ -184,20 +180,21 @@
     const questionTracker = document.getElementById('question-tracker');
     const scoreTracker = document.getElementById('score-tracker');
 
-    // 1. Fetch data from your Sheet
+    // Fetch and parse the CSV
     async function initQuiz() {
       try {
         const response = await fetch(API_URL);
-        questionsData = await response.json();
+        const csvText = await response.text();
         
-        // Hide loading, show quiz
+        questionsData = parseCSV(csvText);
+        
         loadingScreen.style.display = 'none';
         
         if(questionsData.length > 0) {
           quizScreen.style.display = 'block';
           loadQuestion();
         } else {
-          loadingScreen.innerHTML = "<h2>No questions found. Add rows to your Google Sheet!</h2>";
+          loadingScreen.innerHTML = "<h2>No questions found. Check your sheet.</h2>";
           loadingScreen.style.display = 'block';
         }
       } catch (error) {
@@ -206,19 +203,36 @@
       }
     }
 
-    // 2. Render the current question to the screen
+    // Convert CSV text to JSON array
+    function parseCSV(text) {
+      const rows = text.split('\n').map(row => row.trim()).filter(row => row);
+      const headers = rows[0].split(',').map(h => h.trim());
+      const result = [];
+      
+      for (let i = 1; i < rows.length; i++) {
+        const values = rows[i].match(/(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^,]+))/g) || [];
+        const record = {};
+        for (let j = 0; j < headers.length; j++) {
+          let val = values[j] ? values[j].trim() : "";
+          if (val.startsWith('"') && val.endsWith('"')) {
+             val = val.substring(1, val.length - 1).replace(/""/g, '"');
+          }
+          record[headers[j]] = val;
+        }
+        result.push(record);
+      }
+      return result;
+    }
+
     function loadQuestion() {
-      // Reset state for new question
       nextBtn.style.display = 'none';
       optionsContainer.innerHTML = '';
       
       const currentQ = questionsData[currentIndex];
       
-      // Update header
       questionTracker.textContent = `Question ${currentIndex + 1} of ${questionsData.length}`;
       questionText.textContent = currentQ['Question'];
 
-      // Map the A, B, C, D keys to the actual column names in your sheet
       const optionsMap = [
         { letter: 'A', text: currentQ['Option A'] },
         { letter: 'B', text: currentQ['Option B'] },
@@ -226,28 +240,22 @@
         { letter: 'D', text: currentQ['Option D'] }
       ];
 
-      // Create a button for each option
       optionsMap.forEach(opt => {
-        if (!opt.text) return; // Skip if cell is empty
+        if (!opt.text) return;
 
         const btn = document.createElement('button');
         btn.classList.add('option-btn');
         btn.textContent = `${opt.letter}. ${opt.text}`;
         
-        // When clicked, check if this letter matches the 'Correct Answer' column
         btn.onclick = () => checkAnswer(opt.letter, btn);
-        
         optionsContainer.appendChild(btn);
       });
     }
 
-    // 3. Logic to handle answer selection
     function checkAnswer(selectedLetter, clickedBtn) {
       const currentQ = questionsData[currentIndex];
-      // Clean up any extra spaces the sheet might have added to the answer
       const correctAnswer = String(currentQ['Correct Answer']).trim().toUpperCase();
       
-      // Disable all buttons so user can't click twice
       const allBtns = document.querySelectorAll('.option-btn');
       allBtns.forEach(btn => btn.disabled = true);
 
@@ -257,20 +265,15 @@
         scoreTracker.textContent = `Score: ${score}`;
       } else {
         clickedBtn.classList.add('wrong');
-        
-        // Find and highlight the actual correct button
         allBtns.forEach(btn => {
           if (btn.textContent.startsWith(correctAnswer + ".")) {
             btn.classList.add('correct');
           }
         });
       }
-
-      // Show the Next button
       nextBtn.style.display = 'block';
     }
 
-    // 4. Handle moving forward
     nextBtn.onclick = () => {
       currentIndex++;
       if (currentIndex < questionsData.length) {
@@ -280,7 +283,6 @@
       }
     };
 
-    // 5. Show final score
     function showResults() {
       quizScreen.style.display = 'none';
       resultScreen.style.display = 'block';
@@ -295,7 +297,6 @@
       else feedback.textContent = "Time to revisit the study modules.";
     }
 
-    // 6. Restart logic
     document.getElementById('restart-btn').onclick = () => {
       currentIndex = 0;
       score = 0;
@@ -305,7 +306,7 @@
       loadQuestion();
     };
 
-    // Start the app when page loads
+    // Initialize
     initQuiz();
   </script>
 </body>
