@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CA Final Prep Quiz</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --border: #e2e8f0;
+      --correct: #22c55e;
+      --wrong: #ef4444;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .quiz-container {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 600px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      padding: 30px;
+    }
+
+    #loading-screen {
+      text-align: center;
+      font-weight: 500;
+      color: var(--primary);
+    }
+
+    #quiz-screen, #result-screen {
+      display: none;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      color: #64748b;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 10px;
+    }
+
+    .question {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text);
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-btn.correct {
+      background-color: #dcfce7;
+      border-color: var(--correct);
+      color: #166534;
+    }
+
+    .option-btn.wrong {
+      background-color: #fee2e2;
+      border-color: var(--wrong);
+      color: #991b1b;
+    }
+
+    #next-btn, #restart-btn {
+      margin-top: 25px;
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+    }
+
+    #next-btn:hover, #restart-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .result-content {
+      text-align: center;
+    }
+
+    .score-display {
+      font-size: 3rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <!-- 1. Loading State -->
+    <div id="loading-screen">
+      <h2>Fetching CA Questions...</h2>
+      <p>Connecting to Google Sheets</p>
+    </div>
+
+    <!-- 2. Active Quiz State -->
+    <div id="quiz-screen">
+      <div class="header">
+        <span id="question-tracker">Question 1 of X</span>
+        <span id="score-tracker">Score: 0</span>
+      </div>
+      <div class="question" id="question-text">Loading question...</div>
+      <div class="options-grid" id="options-container">
+        <!-- Buttons are injected here by JavaScript -->
+      </div>
+      <button id="next-btn">Next Question</button>
+    </div>
+
+    <!-- 3. Final Results State -->
+    <div id="result-screen">
+      <div class="result-content">
+        <h2>Mock Test Complete!</h2>
+        <div class="score-display" id="final-score">0 / 0</div>
+        <p id="feedback-text">Great effort!</p>
+        <button id="restart-btn">Take Test Again</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Your exact Google Sheet API URL
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwfHxgBozZ8KUPItimtYImfmzRzCCw0R_WEcLka7xbYYz1xZtOjzBBV2e7YB5TBbceX/exec';
+    
+    let questionsData = [];
+    let currentIndex = 0;
+    let score = 0;
+
+    // DOM Elements
+    const loadingScreen = document.getElementById('loading-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultScreen = document.getElementById('result-screen');
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const nextBtn = document.getElementById('next-btn');
+    const questionTracker = document.getElementById('question-tracker');
+    const scoreTracker = document.getElementById('score-tracker');
+
+    // 1. Fetch data from your Sheet
+    async function initQuiz() {
+      try {
+        const response = await fetch(API_URL);
+        questionsData = await response.json();
+        
+        // Hide loading, show quiz
+        loadingScreen.style.display = 'none';
+        
+        if(questionsData.length > 0) {
+          quizScreen.style.display = 'block';
+          loadQuestion();
+        } else {
+          loadingScreen.innerHTML = "<h2>No questions found. Add rows to your Google Sheet!</h2>";
+          loadingScreen.style.display = 'block';
+        }
+      } catch (error) {
+        loadingScreen.innerHTML = "<h2>Error loading questions. Check console.</h2>";
+        console.error("Fetch Error:", error);
+      }
+    }
+
+    // 2. Render the current question to the screen
+    function loadQuestion() {
+      // Reset state for new question
+      nextBtn.style.display = 'none';
+      optionsContainer.innerHTML = '';
+      
+      const currentQ = questionsData[currentIndex];
+      
+      // Update header
+      questionTracker.textContent = `Question ${currentIndex + 1} of ${questionsData.length}`;
+      questionText.textContent = currentQ['Question'];
+
+      // Map the A, B, C, D keys to the actual column names in your sheet
+      const optionsMap = [
+        { letter: 'A', text: currentQ['Option A'] },
+        { letter: 'B', text: currentQ['Option B'] },
+        { letter: 'C', text: currentQ['Option C'] },
+        { letter: 'D', text: currentQ['Option D'] }
+      ];
+
+      // Create a button for each option
+      optionsMap.forEach(opt => {
+        if (!opt.text) return; // Skip if cell is empty
+
+        const btn = document.createElement('button');
+        btn.classList.add('option-btn');
+        btn.textContent = `${opt.letter}. ${opt.text}`;
+        
+        // When clicked, check if this letter matches the 'Correct Answer' column
+        btn.onclick = () => checkAnswer(opt.letter, btn);
+        
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    // 3. Logic to handle answer selection
+    function checkAnswer(selectedLetter, clickedBtn) {
+      const currentQ = questionsData[currentIndex];
+      // Clean up any extra spaces the sheet might have added to the answer
+      const correctAnswer = String(currentQ['Correct Answer']).trim().toUpperCase();
+      
+      // Disable all buttons so user can't click twice
+      const allBtns = document.querySelectorAll('.option-btn');
+      allBtns.forEach(btn => btn.disabled = true);
+
+      if (selectedLetter === correctAnswer) {
+        clickedBtn.classList.add('correct');
+        score++;
+        scoreTracker.textContent = `Score: ${score}`;
+      } else {
+        clickedBtn.classList.add('wrong');
+        
+        // Find and highlight the actual correct button
+        allBtns.forEach(btn => {
+          if (btn.textContent.startsWith(correctAnswer + ".")) {
+            btn.classList.add('correct');
+          }
+        });
+      }
+
+      // Show the Next button
+      nextBtn.style.display = 'block';
+    }
+
+    // 4. Handle moving forward
+    nextBtn.onclick = () => {
+      currentIndex++;
+      if (currentIndex < questionsData.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    };
+
+    // 5. Show final score
+    function showResults() {
+      quizScreen.style.display = 'none';
+      resultScreen.style.display = 'block';
+      
+      document.getElementById('final-score').textContent = `${score} / ${questionsData.length}`;
+      
+      const percentage = (score / questionsData.length) * 100;
+      const feedback = document.getElementById('feedback-text');
+      
+      if (percentage >= 80) feedback.textContent = "Excellent! You are exam ready.";
+      else if (percentage >= 50) feedback.textContent = "Good effort, but room for review.";
+      else feedback.textContent = "Time to revisit the study modules.";
+    }
+
+    // 6. Restart logic
+    document.getElementById('restart-btn').onclick = () => {
+      currentIndex = 0;
+      score = 0;
+      scoreTracker.textContent = `Score: 0`;
+      resultScreen.style.display = 'none';
+      quizScreen.style.display = 'block';
+      loadQuestion();
+    };
+
+    // Start the app when page loads
+    initQuiz();
+  </script>
+</body>
+</html>
