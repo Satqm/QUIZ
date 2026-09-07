@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CA AITT Exam Prep · Interactive Revision</title>
+    <!-- Font & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* ─── reset & base ─── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --bg: #f6f8fc;
+            --surface: #ffffff;
+            --surface-hover: #f0f3f9;
+            --border: #e2e8f0;
+            --text: #0b1a33;
+            --text-secondary: #2d4059;
+            --text-muted: #5e6f8d;
+            --primary: #1a4c8a;
+            --primary-light: #eef4fb;
+            --primary-dark: #0d2e55;
+            --accent: #2d7a9b;
+            --shadow: 0 8px 30px rgba(0, 20, 40, 0.08);
+            --radius: 14px;
+            --radius-sm: 8px;
+            --transition: 0.25s ease;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* ─── sidebar navigation ─── */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 280px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 28px 16px 20px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.02);
+            transition: transform 0.3s ease;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 8px;
+        }
+        .sidebar-brand {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-dark);
+        }
+        .sidebar-brand i {
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+        .sidebar-brand span {
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-left: auto;
+            background: var(--primary-light);
+            padding: 2px 10px;
+            border-radius: 30px;
+        }
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .nav-list li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: background var(--transition), color var(--transition);
+            text-decoration: none;
+        }
+        .nav-list li a i {
+            width: 20px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            transition: color var(--transition);
+        }
+        .nav-list li a:hover,
+        .nav-list li a.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .nav-list li a:hover i,
+        .nav-list li a.active i {
+            color: var(--primary);
+        }
+        .nav-list li a .badge {
+            margin-left: auto;
+            background: var(--border);
+            font-size: 0.65rem;
+            padding: 1px 8px;
+            border-radius: 30px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .nav-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 12px 0;
+        }
+
+        /* ─── main content ─── */
+        .main {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px 50px 80px;
+            max-width: 1200px;
+        }
+        .page-header {
+            margin-bottom: 40px;
+        }
+        .page-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .page-header h1 i {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-top: 6px;
+            max-width: 600px;
+        }
+        .search-box {
+            margin-top: 18px;
+            display: flex;
+            align-items: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 60px;
+            padding: 4px 18px 4px 22px;
+            max-width: 420px;
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+        .search-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 76, 138, 0.12);
+        }
+        .search-box i {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .search-box input {
+            border: none;
+            background: transparent;
+            padding: 12px 12px 12px 10px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            width: 100%;
+            outline: none;
+            color: var(--text);
+        }
+        .search-box input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        /* ─── section cards ─── */
+        .section {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px 32px 32px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border);
+            transition: box-shadow var(--transition);
+        }
+        .section:hover {
+            box-shadow: 0 12px 40px rgba(0, 20, 40, 0.10);
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            user-select: none;
+            border-radius: var(--radius-sm);
+            padding: 4px 4px 4px 0;
+            transition: background var(--transition);
+        }
+        .section-header:hover {
+            background: var(--surface-hover);
+        }
+        .section-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: var(--primary-dark);
+            margin: 0;
+        }
+        .section-header .icon-circle {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .section-header .toggle-icon {
+            margin-left: auto;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+        }
+        .section-header .toggle-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+        .section-body {
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+            max-height: 9999px;
+            opacity: 1;
+        }
+        .section-body.hidden {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        /* ─── content blocks ─── */
+        .block {
+            margin-top: 18px;
+        }
+        .block:first-of-type {
+            margin-top: 0;
+        }
+        .block-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .block-title i {
+            color: var(--accent);
+            font-size: 0.85rem;
+        }
+        .block p,
+        .block li {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .block ul,
+        .block .grid-list {
+            padding-left: 20px;
+            margin: 6px 0 4px;
+        }
+        .block ul li {
+            margin-bottom: 4px;
+        }
+        .block .highlight {
+            background: #fef9e7;
+            padding: 1px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+            color: #7a5d00;
+        }
+        .block .tag {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 1px 10px;
+            border-radius: 30px;
+            margin-right: 4px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 24px;
+            margin-top: 10px;
+        }
+        .grid-2 .item {
+            background: var(--bg);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary);
+        }
+        .grid-2 .item strong {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--primary-dark);
+        }
+        .grid-2 .item span {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+        }
+
+        /* ─── tables ─── */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 12px 0 4px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+            min-width: 500px;
+        }
+        table thead {
+            background: var(--bg);
+        }
+        table th {
+            text-align: left;
+            padding: 14px 18px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 2px solid var(--border);
+        }
+        table td {
+            padding: 13px 18px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+        table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        table tbody tr:hover {
+            background: var(--surface-hover);
+        }
+        table td:first-child {
+            font-weight: 500;
+            color: var(--text);
+            white-space: nowrap;
+        }
+
+        /* ─── python table special ─── */
+        .python-grid table {
+            min-width: 400px;
+        }
+        .python-grid table td:first-child {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        /* ─── responsive ─── */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            z-index: 200;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 60px;
+            padding: 10px 16px;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            color: var(--text);
+        }
+        .menu-toggle i {
+            pointer-events: none;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.25);
+            z-index: 90;
+            backdrop-filter: blur(2px);
+        }
+
+        @media (max-width: 1024px) {
+            .main {
+                padding: 30px 28px 60px;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 820px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 290px;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .overlay.active {
+                display: block;
+            }
+            .menu-toggle {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .main {
+                margin-left: 0;
+                padding: 80px 18px 50px;
+            }
+            .page-header h1 {
+                font-size: 1.6rem;
+            }
+            .section {
+                padding: 20px 18px 24px;
+            }
+            .table-wrap table {
+                font-size: 0.82rem;
+                min-width: 360px;
+            }
+            table th,
+            table td {
+                padding: 10px 12px;
+            }
+        }
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.3rem;
+                flex-wrap: wrap;
+            }
+            .search-box {
+                max-width: 100%;
+            }
+            .section-header h2 {
+                font-size: 1.1rem;
+            }
+            .grid-2 .item {
+                padding: 10px 14px;
+            }
+        }
+
+        /* ─── utility ─── */
+        .text-muted {
+            color: var(--text-muted);
+        }
+        .mt-1 {
+            margin-top: 6px;
+        }
+        .mb-1 {
+            margin-bottom: 6px;
+        }
+        .fw-600 {
+            font-weight: 600;
+        }
+        .flex {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .gap-2 {
+            gap: 12px;
+        }
+        .chip {
+            background: var(--bg);
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+        .no-highlight {
+            background: transparent !important;
+        }
+
+        /* scroll margin for anchor */
+        .section {
+            scroll-margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── mobile menu toggle ─── -->
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+        <span style="font-size:0.8rem;font-weight:500;">Menu</span>
+    </button>
+    <div class="overlay" id="overlay"></div>
+
+    <!-- ─── sidebar ─── -->
+    <nav class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+        <div class="sidebar-brand">
+            <i class="fas fa-graduation-cap"></i>
+            CA · AITT
+            <span>Prep</span>
+        </div>
+        <ul class="nav-list">
+            <li><a href="#sec-forensic" class="active"><i class="fas fa-search-dollar"></i> Forensic Accounting</a></li>
+            <li><a href="#sec-legal"><i class="fas fa-gavel"></i> Legal &amp; Cyber Law</a></li>
+            <li><a href="#sec-cyber"><i class="fas fa-shield-hal"></i> Cyber Security</a></li>
+            <li><a href="#sec-powerbi"><i class="fas fa-chart-pie"></i> Power BI &amp; Query</a></li>
+            <li><a href="#sec-python"><i class="fab fa-python"></i> Python</a></li>
+            <li><a href="#sec-knime"><i class="fas fa-robot"></i> KNIME</a></li>
+            <li><a href="#sec-rpa"><i class="fas fa-cogs"></i> RPA &amp; ERP</a></li>
+            <li class="nav-divider"></li>
+            <li style="font-size:0.75rem;color:var(--text-muted);padding:8px 14px;">
+                <i class="far fa-clock"></i> Quick revision · 7 topics
+            </li>
+        </ul>
+    </nav>
+
+    <!-- ─── main content ─── -->
+    <main class="main" id="mainContent">
+
+        <!-- header -->
+        <div class="page-header">
+            <h1><i class="fas fa-book-open"></i> CA AITT Exam Prep</h1>
+            <p>Interactive revision guide — Forensic Accounting, Cyber Law, Power BI, Python, KNIME, RPA &amp; ERP.</p>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search topics, terms, tables…" aria-label="Search" />
+            </div>
+        </div>
+
+        <!-- ─── 1. FORENSIC ACCOUNTING ─── -->
+        <section class="section" id="sec-forensic">
+            <div class="section-header" data-toggle>
+                <div class="icon-circle"><i class="fas fa-search-dollar"></i></div>
+                <h2>Forensic Accounting &amp; Investigation</h2>
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="section-body">
+                <!-- Net Worth -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-calculator"></i> Net Worth Theory</div>
+                    <ul>
+                        <li><span class="tag">Formula</span> <strong>Gross Income</strong> = Increase in Net Worth + Personal Expenditure / Family Spending.</li>
+                        <li><span class="tag">Adjustment</span> Cash hoarded from previous periods is <span class="highlight">subtracted</span> from gross income.</li>
+                    </ul>
+                </div>
+                <!-- Expenditure -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-coins"></i> Expenditure Theory</div>
+                    <ul>
+                        <li><span class="tag">Method</span> Compares total cash uses to total income to identify undisclosed / unreported funds.</li>
+                        <li><span class="tag">Suitability</span> Most suitable when no books of accounts are maintained, records are inadequate, or taxpayer is withholding records.</li>
+                        <li><span class="tag">Exclusions</span> Ignores non-cash expenses like depreciation and amortization.</li>
+                    </ul>
+                </div>
+                <!-- Intelligence -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-brain"></i> Investigation using Intelligence</div>
+                    <p>Focuses heavily on behavioral &amp; background analysis — evaluating educational background, family pressures, lifestyle spending, companions.</p>
+                </div>
+                <!-- AICITSS -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-gem"></i> AICITSS Curriculum Focus</div>
+                    <ul>
+                        <li>Forensic Accounting &amp; Fraud Detection</li>
+                        <li>Digital Forensic &amp; Cyber Security</li>
+                        <li>Data Analytics Tools</li>
+                    </ul>
+                </div>
+                <!-- FAIS table -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-table"></i> Forensic Accounting &amp; Investigation Standards (FAIS)</div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Standard</th><th>Key Focus / Objective</th></tr></thead>
+                            <tbody>
+                                <tr><td>FAIS 110</td><td><strong>Nature of Engagement:</strong> Defines the engagement scope, mandate, and required skills.</td></tr>
+                                <tr><td>FAIS 120</td><td><strong>Fraud Risk:</strong> Identifies vulnerable areas and prepares a list of fraud risk indicators (red flags).</td></tr>
+                                <tr><td>FAIS 130</td><td><strong>Laws and Regulations:</strong> Ensures the professional has knowledge of relevant direct-impact and engagement-specific laws.</td></tr>
+                                <tr><td>FAIS 140</td><td><strong>Applying Hypothesis:</strong> Emphasizes forming a hypothesis to direct methodological evidence collection.</td></tr>
+                                <tr><td>FAIS 250</td><td><strong>Communication:</strong> Governs clear, continuous, and protocol-driven communication with stakeholders.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── 2. LEGAL & CYBER LAW ─── -->
+        <section class="section" id="sec-legal">
+            <div class="section-header" data-toggle>
+                <div class="icon-circle"><i class="fas fa-gavel"></i></div>
+                <h2>Legal Framework &amp; Cyber Law</h2>
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="section-body">
+                <div class="block">
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Act / Section</th><th>Provision / Application</th></tr></thead>
+                            <tbody>
+                                <tr><td>IT Act, 2000 (Sec 43)</td><td>Addresses <strong>unauthorized data access</strong> (unauthorized downloads, extraction, copying).</td></tr>
+                                <tr><td>IT Act, 2000 (Sec 66)</td><td>Addresses <strong>hacking and data theft</strong>; prescribes penalties for computer-related offenses.</td></tr>
+                                <tr><td>Indian Evidence Act (Sec 65B)</td><td>Regulates the admissibility of electronic records and computer outputs as evidence.</td></tr>
+                                <tr><td>SEBI Act, 1992</td><td>Regulation 11C empowers SEBI to investigate insider trading and intermediary malpractice.</td></tr>
+                                <tr><td>Digital Forensics in Litigation</td><td>Providing <strong>admissible evidence</strong> (preserving chain of custody for courtroom presentation).</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── 3. CYBER SECURITY ─── -->
+        <section class="section" id="sec-cyber">
+            <div class="section-header" data-toggle>
+                <div class="icon-circle"><i class="fas fa-shield-hal"></i></div>
+                <h2>Cyber Security &amp; Digital Forensics</h2>
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="section-body">
+                <!-- Threat Profiles -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-skull"></i> Threat Profiles &amp; Attacks</div>
+                    <div class="grid-2">
+                        <div class="item"><strong>Reconnaissance</strong><span>Unauthorized discovery &amp; mapping of systems, services, or vulnerabilities (e.g., port scans).</span></div>
+                        <div class="item"><strong>Spammer</strong><span>Individual who sends large numbers of unsolicited bulk messages.</span></div>
+                        <div class="item"><strong>Phishing</strong><span>Trickery to gain sensitive information by spoofing a legitimate source.</span></div>
+                        <div class="item"><strong>Vishing</strong><span>Fraudulent phone call attempting to steal personal information (e.g., banking passwords/OTPs).</span></div>
+                        <div class="item"><strong>Phreaker</strong><span>Manipulates the phone network to perform unauthorized functions.</span></div>
+                        <div class="item"><strong>Viruses vs. Worms</strong><span>Worms are <span class="highlight">self-replicating</span> &amp; spread standalone; viruses require a host file.</span></div>
+                        <div class="item"><strong>Zombie</strong><span>Compromised computer/device within a botnet controlled remotely.</span></div>
+                        <div class="item"><strong>Denial of Service (DoS)</strong><span>Attack designed to saturate network links with spurious data, disabling services.</span></div>
+                        <div class="item"><strong>Cyber-squatting</strong><span>Registering a domain name intending to profit from someone else's trademark.</span></div>
+                        <div class="item"><strong>Port Redirection</strong><span>Attack using a compromised host to pass traffic through a firewall that would otherwise be dropped.</span></div>
+                    </div>
+                </div>
+                <!-- Industry Landscape -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-globe"></i> Industry Cyber Landscape</div>
+                    <ul>
+                        <li><span class="tag">Ethical Hacking</span> Primary purpose is to identify system vulnerabilities proactively (White Hat).</li>
+                        <li><span class="tag">Financial Sector Threats</span> Recognized globally by G7, G20 Finance Ministers, and CPMI at BIS.</li>
+                        <li><span class="tag">Trending Attacks</span> Ransomware, supply chain attacks, phishing, and insider threats.</li>
+                        <li><span class="tag">Mobile Threats</span> A 2016 ITU/CGAP survey revealed 83% of Philippine, 56% of Ghanaian and 27% of Tanzanian mobile money users received fraudulent SMSs.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── 4. POWER BI ─── -->
+        <section class="section" id="sec-powerbi">
+            <div class="section-header" data-toggle>
+                <div class="icon-circle"><i class="fas fa-chart-pie"></i></div>
+                <h2>Microsoft Power BI &amp; Power Query</h2>
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="section-body">
+                <!-- Ecosystem -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-cloud"></i> Power BI Ecosystem</div>
+                    <ul>
+                        <li><span class="tag">Common Workflow</span> Create dataset in Power BI Desktop → Publish to Power BI Service → Share dashboards.</li>
+                        <li><span class="tag">Power BI Desktop</span> Used to create datasets, visualizations, and reports.</li>
+                        <li><span class="tag">Power BI Service</span> Used to schedule data refreshes (up to 8 per day), embed reports, and distribute apps.</li>
+                    </ul>
+                    <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">
+                        <span class="chip"><i class="far fa-eye"></i> Report View: create &amp; arrange visuals</span>
+                        <span class="chip"><i class="fas fa-table"></i> Data View: inspect tabular data</span>
+                        <span class="chip"><i class="fas fa-project-diagram"></i> Model View: define relationships</span>
+                    </div>
+                    <div class="grid-2" style="margin-top:12px;">
+                        <div class="item"><strong>Dataset vs. Dashboard</strong><span>Dataset = collection of data. Dashboard = single canvas with tiles/widgets for quick insights.</span></div>
+                        <div class="item"><strong>Tiles</strong><span>Rectangular box holding an individual visual on a dashboard. Pinning visuals adds them for quick access.</span></div>
+                        <div class="item"><strong>Apps</strong><span>Collection of dashboards/reports for distribution. <em>Template apps</em> publish pre-built content.</span></div>
+                        <div class="item"><strong>Treemap</strong><span>Best visual for showing hierarchical part-to-whole data.</span></div>
+                        <div class="item"><strong>DAX</strong><span>Used to create dynamic titles for visuals.</span></div>
+                        <div class="item"><strong>AI Insights</strong><span>Used to identify trends and anomalies in data.</span></div>
+                        <div class="item"><strong>Reading vs. Editing</strong><span>Reading = data viewing (consumer). Editing = data editing (designer).</span></div>
+                        <div class="item"><strong>Valid Data Sources</strong><span>Salesforce, Azure, Excel, SQL Server, SharePoint, Web. <span class="highlight">Adobe Illustrator files are NOT valid</span>.</span></div>
+                    </div>
+                </div>
+                <!-- Power Query -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-code"></i> Power Query &amp; M Language</div>
+                    <div class="grid-2">
+                        <div class="item"><strong>Power Query Editor</strong><span>Create reusable data transformations.</span></div>
+                        <div class="item"><strong>Lexical Structure</strong><span>Defines valid texts in the M formula language.</span></div>
+                        <div class="item"><strong>Records</strong><span>Sets of name-value pairs allowing names without quotes.</span></div>
+                        <div class="item"><strong>Let Expressions</strong><span>Primary role is to define auxiliary values for complex expressions.</span></div>
+                        <div class="item"><strong>Lazy Evaluation</strong><span>Order determined by dependencies (evaluated as needed).</span></div>
+                        <div class="item"><strong>Pure Functional</strong><span>Programming paradigm the M formula language aims to achieve.</span></div>
+                        <div class="item"><strong>Parameter Values</strong><span>Used in table functions primarily for naming output columns.</span></div>
+                        <div class="item"><strong>Equation Criteria</strong><span>Used in table functions for equality comparisons with key selectors/comparers.</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── 5. PYTHON ─── -->
+        <section class="section" id="sec-python">
+            <div class="section-header" data-toggle>
+                <div class="icon-circle"><i class="fab fa-python"></i></div>
+                <h2>Python Data Structures, Syntax &amp; Libraries</h2>
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="section-body">
+                <!-- Syntax table -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-code"></i> Syntax &amp; Data Structures</div>
+                    <div class="table-wrap python-grid">
+                        <table>
+                            <thead><tr><th>Concept</th><th>Characteristic / Output</th></tr></thead>
+                            <tbody>
+                                <tr><td>Tuple</td><td><span class="highlight">Immutable</span> data structure.</td></tr>
+                                <tr><td>Dictionary</td><td>Mutable structure for key-value pair storage; unordered.</td></tr>
+                                <tr><td>Set</td><td>Unordered data structure that does not allow duplicates.</td></tr>
+                                <tr><td>def</td><td>Keyword used to define a standard function.</td></tr>
+                                <tr><td>lambda</td><td>Keyword used to create anonymous, inline functions.</td></tr>
+                                <tr><td>List Indexing</td><td>Negative indexing <code>[-1]</code> accesses the final element. <br /> <code>x = [1,2,3]; print(x[-1])</code> → <strong>3</strong><br />Zero-indexed: <code>my_tuple = (1,2,3); print(my_tuple[1])</code> → <strong>2</strong></td></tr>
+                                <tr><td>List Slicing</td><td><code>[start:stop]</code> includes start up to stop−1. <br /><code>x = [1,2,3,4]; print(x[1:3])</code> → <strong>[2,3]</strong></td></tr>
+                                <tr><td>range()</td><td><code>for i in range(3): print(i)</code> → <strong>0, 1, 2</strong></td></tr>
+                                <tr><td>Operators</td><td><code>!=</code> (not equal), <code>**</code> (exponentiation), <code>%</code> (modulus/remainder)</td></tr>
+                                <tr><td>Conditionals</td><td>Valid syntax: <code>if x == 5:</code></td></tr>
+                                <tr><td>not / in</td><td><code>not</code> negates a boolean; <code>in</code> checks if a value exists in a sequence.</td></tr>
+                                <tr><td>Loop Control</td><td><code>continue</code> skips current iteration; <code>else</code> clause executes if loop completes normally.</td></tr>
+                                <tr><td>Dict Methods</td><td><code>keys()</code> returns all keys; <code>items()</code> returns key-value pairs.</td></tr>
+                                <tr><td>zip()</td><td>Function that allows iteration over multiple sequences together.</td></tr>
+                                <tr><td>return</td><td>Statement that terminates a function.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Libraries -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-cube"></i> Python Libraries</div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Library</th><th>Primary Function</th></tr></thead>
+                            <tbody>
+                                <tr><td>Pandas</td><td>Data manipulation and analysis.</td></tr>
+                                <tr><td>Matplotlib</td><td>Creating static visualizations.</td></tr>
+                                <tr><td>Plotly</td><td>Creating interactive web visualizations.</td></tr>
+                                <tr><td>Scikit-learn</td><td>Data preprocessing for machine learning models.</td></tr>
+                                <tr><td>TensorFlow</td><td>Deep learning.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── 6. KNIME ─── -->
+        <section class="section" id="sec-knime">
+            <div class="section-header" data-toggle>
+                <div class="icon-circle"><i class="fas fa-robot"></i></div>
+                <h2>KNIME Analytics Platform</h2>
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="section-body">
+                <!-- Nodes -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-plug"></i> Nodes and Operations</div>
+                    <div class="grid-2">
+                        <div class="item"><strong>Node Configuration</strong><span>Method used to import data into a KNIME workflow.</span></div>
+                        <div class="item"><strong>Data Explorer</strong><span>Computes descriptive statistics and overviews data.</span></div>
+                        <div class="item"><strong>Statistics</strong><span>Computes univariate summary / descriptive statistics.</span></div>
+                        <div class="item"><strong>Chi-Square Test</strong><span>Used for hypothesis testing.</span></div>
+                        <div class="item"><strong>Normalizer</strong><span>Scales data for machine learning models.</span></div>
+                        <div class="item"><strong>Spark Executor</strong><span>Performs distributed data processing.</span></div>
+                        <div class="item"><strong>Association Rule Learner</strong><span>Used for association rule mining.</span></div>
+                        <div class="item"><strong>Variable Loop Start</strong><span>Iterates over a range of variable values.</span></div>
+                        <div class="item"><strong>Workflow Executor</strong><span>Allows workflows to be called as subroutines.</span></div>
+                    </div>
+                </div>
+                <!-- ML & Execution -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-microchip"></i> Machine Learning &amp; Execution</div>
+                    <div class="grid-2">
+                        <div class="item"><strong>ML Workflows</strong><span>Predict future outcomes based on historical data.</span></div>
+                        <div class="item"><strong>Regression</strong><span>Predicting numerical values or quantities.</span></div>
+                        <div class="item"><strong>Cross-Validation Loop</strong><span>Assesses model generalization in ML.</span></div>
+                        <div class="item"><strong>Ensemble Learner</strong><span>Combines multiple models for improved predictive performance.</span></div>
+                        <div class="item"><strong>K-Means</strong><span>Node used for k-means clustering.</span></div>
+                        <div class="item"><strong>Model Writer</strong><span>Used for model deployment (saving models).</span></div>
+                        <div class="item"><strong>Model Reader</strong><span>Loads a trained ML model for predictions.</span></div>
+                        <div class="item"><strong>Workflow Execution</strong><span>Generates results based on the workflow's logic.</span></div>
+                    </div>
+                </div>
+                <!-- UI -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-palette"></i> User Interface &amp; Structuring</div>
+                    <div class="grid-2">
+                        <div class="item"><strong>Canvas Size</strong><span>Adjusted to customize the appearance of the workflow editor.</span></div>
+                        <div class="item"><strong>Metanodes</strong><span>Simplify complex workflows by grouping nodes together.</span></div>
+                        <div class="item"><strong>Components</strong><span>Encapsulate reusable workflow segments.</span></div>
+                        <div class="item"><strong>Workflow Coach</strong><span>Suggests next nodes based on usage patterns.</span></div>
+                        <div class="item"><strong>Common Visualizations</strong><span>Scatter Plot (Musical composition is <span class="highlight">not</span> a standard node).</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── 7. RPA & ERP ─── -->
+        <section class="section" id="sec-rpa">
+            <div class="section-header" data-toggle>
+                <div class="icon-circle"><i class="fas fa-cogs"></i></div>
+                <h2>Robotic Process Automation (RPA) &amp; ERP Systems</h2>
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="section-body">
+                <!-- RPA Libraries -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-tools"></i> RPA Libraries &amp; Tools</div>
+                    <div class="grid-2">
+                        <div class="item"><strong>UiPath &amp; Blue Prism</strong><span>Enterprise RPA tools.</span></div>
+                        <div class="item"><strong>Selenium</strong><span>Web automation and web scraping in RPA.</span></div>
+                        <div class="item"><strong>SMTP</strong><span>Email automation.</span></div>
+                        <div class="item"><strong>OS</strong><span>File handling.</span></div>
+                        <div class="item"><strong>Pandas &amp; NumPy</strong><span>Data manipulation (Pandas) and fast array math (NumPy) in RPA.</span></div>
+                        <div class="item"><strong>Automation Anywhere</strong><span>Workflow orchestration in RPA.</span></div>
+                        <div class="item"><strong>PYODBC</strong><span>Database connectivity.</span></div>
+                        <div class="item"><strong>OpenCV</strong><span>Image processing.</span></div>
+                        <div class="item"><strong>Tesseract</strong><span>Optical Character Recognition (OCR).</span></div>
+                        <div class="item"><strong>BeautifulSoup</strong><span>Web scraping / HTML parsing.</span></div>
+                        <div class="item"><strong>Task Scheduler</strong><span>Used for scheduling unattended RPA execution.</span></div>
+                    </div>
+                </div>
+                <!-- Enterprise ERP -->
+                <div class="block">
+                    <div class="block-title"><i class="fas fa-building"></i> Enterprise ERP (Dynamics 365 &amp; Oracle)</div>
+                    <div class="grid-2">
+                        <div class="item"><strong>Auditing</strong><span>Discipline focusing on ensuring accuracy and reliability of financial records.</span></div>
+                        <div class="item"><strong>Limitation of Financial Data Analysis</strong><span>Overfitting of models.</span></div>
+                        <div class="item"><strong>Oracle Fusion ERP</strong><span><em>Financial Reporting Studio</em> is the financial audit and reporting tool.</span></div>
+                        <div class="item"><strong>Periodic Financial Closing</strong><span>Primary purpose is to generate annual financial statements.</span></div>
+                        <div class="item"><strong>Zero-Based Budgeting</strong><span>Methodology that reverses traditional budgeting.</span></div>
+                        <div class="item"><strong>Three-Way Matching in AP</strong><span>Matches vendor invoices with purchase orders and product receipts.</span></div>
+                    </div>
+                    <div style="margin-top:14px;">
+                        <div class="block-title" style="margin-bottom:4px;"><i class="fas fa-database"></i> Dynamics 365 Finance Specifics</div>
+                        <ul>
+                            <li><span class="tag">Revenue Recognition</span> Breaks down sales into multi-element lines.</li>
+                            <li><span class="tag">Subscription Billing</span> Cannot be used simultaneously with revenue recognition.</li>
+                            <li><span class="tag">Revenue Journal</span> Used to release scheduled revenue to actual revenue.</li>
+                            <li><span class="tag">Financial Dimensions</span> Classified as Custom dimensions vs. Entity-backed dimensions.</li>
+                            <li><span class="tag">Expense Planning</span> Must consider the organizational hierarchy.</li>
+                            <li><span class="tag">Per Diem Rates</span> Determined heavily by the employee's travel destination.</li>
+                            <li><span class="tag">Deposit Slips</span> Purpose is depositing checks and cash into a bank account.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- footer -->
+        <div style="margin-top:40px;padding:20px 0 10px;border-top:1px solid var(--border);font-size:0.85rem;color:var(--text-muted);text-align:center;">
+            <i class="fas fa-sync-alt" style="margin-right:6px;"></i> Interactive revision · CA AITT Exam Prep · Click any section header to collapse/expand
+        </div>
+    </main>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ─── toggle sections ───
+            const toggles = document.querySelectorAll('[data-toggle]');
+            toggles.forEach(header => {
+                header.addEventListener('click', function(e) {
+                    const body = this.parentElement.querySelector('.section-body');
+                    const icon = this.querySelector('.toggle-icon i');
+                    if (!body) return;
+                    const isHidden = body.classList.toggle('hidden');
+                    if (icon) {
+                        icon.className = isHidden ? 'fas fa-chevron-right' : 'fas fa-chevron-down';
+                    }
+                    // update nav active state? not needed.
+                });
+            });
+
+            // ─── search ───
+            const searchInput = document.getElementById('searchInput');
+            const allSections = document.querySelectorAll('.section');
+            const allBlocks = document.querySelectorAll('.block');
+
+            function filterSections(query) {
+                const q = query.toLowerCase().trim();
+                let anyMatch = false;
+
+                allSections.forEach(section => {
+                    const body = section.querySelector('.section-body');
+                    const header = section.querySelector('.section-header h2');
+                    const textContent = section.textContent.toLowerCase();
+
+                    // If search is empty, show all
+                    if (!q) {
+                        section.style.display = '';
+                        if (body) body.classList.remove('hidden');
+                        const icon = section.querySelector('.toggle-icon i');
+                        if (icon) icon.className = 'fas fa-chevron-down';
+                        return;
+                    }
+
+                    const matches = textContent.includes(q);
+                    if (matches) {
+                        section.style.display = '';
+                        if (body) body.classList.remove('hidden');
+                        const icon = section.querySelector('.toggle-icon i');
+                        if (icon) icon.className = 'fas fa-chevron-down';
+                        anyMatch = true;
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+
+                // If nothing matches, show a hint
+                const noResult = document.getElementById('noResult');
+                if (!q) {
+                    if (noResult) noResult.remove();
+                    return;
+                }
+                if (!anyMatch) {
+                    if (!noResult) {
+                        const el = document.createElement('div');
+                        el.id = 'noResult';
+                        el.style.cssText =
+                            'text-align:center;padding:40px 20px;color:var(--text-muted);background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);margin-top:20px;';
+                        el.innerHTML = '<i class="fas fa-search" style="font-size:1.6rem;display:block;margin-bottom:12px;"></i>No matching topics found. Try a different keyword.';
+                        document.querySelector('.main').appendChild(el);
+                    }
+                } else {
+                    if (noResult) noResult.remove();
+                }
+            }
+
+            searchInput.addEventListener('input', function() {
+                filterSections(this.value);
+            });
+
+            // ─── mobile menu ───
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+
+            function closeMenu() {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            }
+
+            function openMenu() {
+                sidebar.classList.add('open');
+                overlay.classList.add('active');
+            }
+
+            menuToggle.addEventListener('click', function() {
+                if (sidebar.classList.contains('open')) {
+                    closeMenu();
+                } else {
+                    openMenu();
+                }
+            });
+
+            overlay.addEventListener('click', closeMenu);
+
+            // close on nav link click (mobile)
+            document.querySelectorAll('.nav-list a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 820) {
+                        closeMenu();
+                    }
+                    // highlight active
+                    document.querySelectorAll('.nav-list a').forEach(a => a.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // ─── highlight nav on scroll ───
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.nav-list a');
+
+            function highlightNav() {
+                let currentId = '';
+                const scrollPos = window.scrollY + 120;
+                sections.forEach(sec => {
+                    const top = sec.offsetTop;
+                    const height = sec.offsetHeight;
+                    if (scrollPos >= top && scrollPos < top + height) {
+                        currentId = sec.id;
+                    }
+                });
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + currentId) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', highlightNav);
+            window.addEventListener('resize', highlightNav);
+            highlightNav();
+
+            // ─── preserve table readability ───
+            // nothing else needed
+
+            console.log('📘 CA AITT interactive revision ready.');
+        })();
+    </script>
+</body>
+  </html>
