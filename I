@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>CA AITT Prep - Pro Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: auto;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top center, #0f172a 0%, #020617 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background-attachment: fixed;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding-bottom: 0; 
+            padding-top: 8px;
+            overscroll-behavior-y: auto;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, .poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .option-btn {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            transition: all 0.15s ease-out;
+            cursor: pointer;
+            text-align: left;
+            padding: 16px 16px;
+            border-radius: 14px;
+            font-size: 14px;
+            color: #f1f5f9;
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            min-height: 52px;
+            touch-action: manipulation;
+        }
+        .option-btn:active:not(:disabled) { transform: scale(0.97); }
+        .option-btn:hover:not(:disabled) {
+            background: linear-gradient(145deg, #2563eb 0%, #1d4ed8 100%);
+            border-color: #60a5fa;
+            transform: translateY(-1px);
+        }
+        .option-selected {
+            background: linear-gradient(145deg, #2563eb 0%, #1d4ed8 100%) !important;
+            border-color: #60a5fa !important;
+        }
+        .option-correct {
+            background: linear-gradient(145deg, #047857 0%, #064e3b 100%) !important;
+            border-color: #34d399 !important;
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.35);
+            opacity: 1 !important;
+        }
+        .option-wrong {
+            background: linear-gradient(145deg, #991b1b 0%, #7f1d1d 100%) !important;
+            border-color: #f87171 !important;
+            box-shadow: 0 0 15px rgba(248, 113, 113, 0.35);
+            opacity: 1 !important;
+        }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .pulse-animation { animation: pulse 1.5s infinite alternate; }
+        @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
+
+        .set-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 20px 18px;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .set-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
+        }
+        .badge {
+            position: absolute; top: 10px; right: 10px;
+            color: #fff; font-size: 10px; font-weight: 700;
+            padding: 4px 10px; border-radius: 20px; z-index: 2;
+        }
+        .badge.resume { background: #d97706; animation: pulseBadge 2s infinite; }
+        .badge.completed { background: #047857; }
+        @keyframes pulseBadge { 0%,100% { box-shadow: 0 0 0 0 rgba(217,119,6,0.4); } 50% { box-shadow: 0 0 0 8px rgba(217,119,6,0); } }
+
+        .btn-action {
+            padding: 11px 16px; border-radius: 10px; font-weight: 600; font-size: 13px;
+            border: none; cursor: pointer; transition: all 0.2s; flex: 1; min-width: 70px;
+            color: white; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn-action:active { transform: scale(0.95); }
+        .btn-practice { background: linear-gradient(145deg, #2563eb, #1d4ed8); }
+        .btn-study { background: linear-gradient(145deg, #059669, #047857); }
+        .btn-summary { background: linear-gradient(145deg, #8b5cf6, #7c3aed); }  /* purple for summary */
+
+        .palette-btn {
+            width: 42px; height: 42px; border-radius: 50%; font-size: 13px; font-weight: 700;
+            border: 2px solid #475569; background: #1e293b; color: #cbd5e1;
+            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+            touch-action: manipulation; flex-shrink: 0; position: relative;
+        }
+        .palette-btn:active { transform: scale(0.9); }
+        .palette-btn.answered { background: #2563eb; border-color: #60a5fa; color: #fff; }
+        .palette-btn.correct { background: #047857; border-color: #34d399; color: #fff; }
+        .palette-btn.wrong { background: #991b1b; border-color: #f87171; color: #fff; }
+        .palette-btn.current { border-color: #fff !important; box-shadow: 0 0 0 3px rgba(255,255,255,0.25); transform: scale(1.1); }
+        .palette-btn.bookmarked::after {
+            content: '\f02e'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; top: -4px; right: -4px;
+            color: #fbbf24; text-shadow: 0 1px 3px rgba(0,0,0,0.8); font-size: 12px;
+        }
+
+        .mobile-sticky-footer {
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
+            background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(59, 130, 246, 0.3); padding-bottom: env(safe-area-inset-bottom, 8px);
+        }
+        
+        /* The requested Mobile Fix */
+        #view-quiz { padding-bottom: 140px; }
+        
+        .toast {
+            position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%);
+            background: #1e293b; border: 1px solid #3b82f6; color: #e2e8f0;
+            padding: 10px 20px; border-radius: 24px; font-size: 12px; font-weight: 600;
+            z-index: 200; opacity: 0; pointer-events: none; transition: all 0.3s ease;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
+
+        .tab-btn {
+            padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 600;
+            transition: all 0.2s; cursor: pointer; border: 1.5px solid transparent;
+            color: #94a3b8; background: transparent; white-space: nowrap;
+        }
+        .tab-btn.active { background: #2563eb; color: #fff; border-color: #60a5fa; }
+        
+        #palette-panel {
+            position: fixed; bottom: 90px; left: 0; right: 0;
+            background: rgba(15,23,42,0.98); backdrop-filter: blur(16px);
+            border-top: 2px solid rgba(59,130,246,0.4); border-radius: 24px 24px 0 0;
+            z-index: 50; padding: 20px 16px 30px; max-height: 60vh;
+            overflow-y: auto; display: none; box-shadow: 0 -8px 40px rgba(0,0,0,0.7);
+        }
+        #palette-panel.open { display: block; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        #custom-dialog-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px); z-index: 9999; display: none;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        #custom-dialog-overlay.active { display: flex; }
+        .dialog-box {
+            background: #1e293b; border: 1px solid rgba(59,130,246,0.5); border-radius: 20px;
+            padding: 24px; max-width: 350px; width: 100%; text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+
+        .sf-icon {
+            display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+            color: #cbd5e1; font-size: 18px; transition: all 0.2s; text-decoration: none;
+        }
+        .sf-icon:hover { background: rgba(255,255,255,0.15); border-color: #60a5fa; color: #fff; transform: translateY(-2px); }
+        .sf-icon.ig:hover { background: #d6249f; border-color: #d6249f; }
+        .sf-icon.li:hover { background: #0077b5; border-color: #0077b5; }
+        .sf-icon.yt:hover { background: #ff0000; border-color: #ff0000; }
+        .sf-icon.tg:hover { background: #0088cc; border-color: #0088cc; }
+
+        /* ─── Summary content styling ─── */
+        #summary-content {
+            color: #e2e8f0;
+            line-height: 1.7;
+        }
+        #summary-content h1, #summary-content h2, #summary-content h3 {
+            color: #60a5fa;
+            margin-top: 1.2rem;
+            margin-bottom: 0.6rem;
+        }
+        #summary-content h1 { font-size: 1.6rem; }
+        #summary-content h2 { font-size: 1.3rem; }
+        #summary-content h3 { font-size: 1.1rem; }
+        #summary-content ul, #summary-content ol {
+            padding-left: 1.5rem;
+            margin: 0.5rem 0;
+        }
+        #summary-content li {
+            margin-bottom: 0.25rem;
+        }
+        #summary-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.8rem 0;
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        #summary-content th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 2px solid #334155;
+        }
+        #summary-content td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #1e293b;
+            vertical-align: top;
+        }
+        #summary-content tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+        #summary-content .highlight {
+            background: #fef9e7;
+            color: #7a5d00;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        #summary-content .tag {
+            display: inline-block;
+            background: #1e3a5f;
+            color: #93c5fd;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 1px 10px;
+            border-radius: 30px;
+            margin-right: 4px;
+        }
+        #summary-content .block {
+            margin: 1.2rem 0;
+        }
+        #summary-content .block-title {
+            font-weight: 600;
+            color: #93c5fd;
+            margin-bottom: 0.2rem;
+        }
+        #summary-content .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 20px;
+            margin: 0.5rem 0;
+        }
+        #summary-content .grid-2 .item {
+            background: rgba(0,0,0,0.25);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border-left: 3px solid #3b82f6;
+        }
+        #summary-content .grid-2 .item strong {
+            display: block;
+            color: #93c5fd;
+        }
+        #summary-content .grid-2 .item span {
+            color: #cbd5e1;
+        }
+        #summary-content .chip {
+            background: #1e293b;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            display: inline-block;
+            margin: 2px 4px 2px 0;
+        }
+        @media (max-width: 640px) {
+            #summary-content .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            #summary-content table {
+                font-size: 0.8rem;
+            }
+            #summary-content th, #summary-content td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast">Progress saved</div>
+
+    <div id="custom-dialog-overlay">
+        <div class="dialog-box">
+            <h2 id="dialog-title" class="text-xl font-bold text-white mb-2">Notice</h2>
+            <p id="dialog-message" class="text-gray-400 text-sm mb-6 leading-relaxed"></p>
+            <div class="flex gap-3 justify-center" id="dialog-buttons"></div>
+        </div>
+    </div>
+
+    <header class="flex flex-wrap justify-between items-center gap-2 glass-card p-2 md:p-3 rounded-xl max-w-6xl mx-auto w-full border-t-2 border-blue-500/50 sticky top-2 z-30 backdrop-blur-sm">
+        <div class="flex items-center gap-2 md:gap-3">
+            <button onclick="requestHome()" class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition shadow-lg shrink-0" title="Back to Home">
+                <i class="fa-solid fa-house"></i>
+            </button>
+            <div class="hidden sm:flex w-9 h-9 rounded-lg bg-blue-900/40 border border-blue-500 items-center justify-center text-blue-400 font-bold poppins shrink-0 text-sm">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+            </div>
+            <div>
+                <h1 class="text-sm md:text-base font-bold text-blue-400 leading-tight">CA AITT PREP</h1>
+                <p id="header-subtitle" class="text-[10px] text-gray-400">Pro Simulator</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 md:gap-3" id="header-controls">
+            <button id="soundToggleBtn" class="w-8 h-8 rounded-full border border-white/20 text-gray-400 flex items-center justify-center transition" onclick="toggleSound()">
+                <i class="fa-solid fa-volume-high" id="sound-icon"></i>
+            </button>
+            <div id="timer-display" class="font-mono text-sm md:text-lg font-bold text-red-400 px-3 py-1.5 bg-red-950/30 rounded-lg border border-red-500/30 flex items-center gap-2">
+                <i class="fa-regular fa-clock"></i> <span>02:00:00</span>
+            </div>
+            <button onclick="requestSubmit()" class="px-3 py-1.5 rounded-lg bg-green-900/40 border border-green-500 text-xs font-bold text-green-300 hover:bg-green-600 hover:text-white transition flex items-center gap-1.5 touch-manipulation">
+                <i class="fa-solid fa-check-double"></i> <span class="hidden sm:inline">Submit</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="flex justify-center mt-2 max-w-6xl mx-auto w-full overflow-x-auto hide-scroll pb-1 px-1" id="main-tabs">
+        <div class="glass-card p-1.5 rounded-xl flex gap-1 border border-blue-500/20 bg-black/40 w-max">
+            <button class="tab-btn active" data-tab="sets" onclick="showView('sets')"><i class="fa-solid fa-layer-group"></i> Sets</button>
+            <button class="tab-btn" data-tab="analytics" onclick="showView('analytics')"><i class="fa-solid fa-chart-pie"></i> Analytics</button>
+            <button class="tab-btn" data-tab="summary" onclick="showView('summary')"><i class="fa-solid fa-file-lines"></i> Repeated Q. Summary</button>
+            <button class="tab-btn" data-tab="rules" onclick="showView('rules')"><i class="fa-solid fa-list-check"></i> Rules</button>
+        </div>
+    </div>
+
+    <main id="view-sets" class="flex flex-col max-w-6xl mx-auto w-full my-3 px-2">
+        <div class="text-center mb-4">
+            <h2 class="text-2xl md:text-3xl font-bold text-white poppins"><span class="text-blue-400">Select</span> Your Module</h2>
+            <p class="text-gray-400 text-sm mt-1">Practice under pressure or Study with expert advice.</p>
+        </div>
+        
+        <div id="loading-indicator" class="text-center py-10 hidden">
+            <i class="fa-solid fa-circle-notch fa-spin text-4xl text-blue-500 mb-3"></i>
+            <p class="text-gray-400 text-sm" id="loading-text">Fetching live resources...</p>
+        </div>
+
+        <div id="set-cards-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto w-full">
+            <!-- Dynamically injected via JS -->
+        </div>
+
+        <div class="flex gap-4 justify-center items-center py-6 mt-8">
+            <a href="https://www.instagram.com/" target="_blank" class="sf-icon ig" title="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.linkedin.com/in/satyam-kumar5286o" target="_blank" class="sf-icon li" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://youtube.com/@observe_with_satyam" target="_blank" class="sf-icon yt" title="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="https://t.me/CA_Protracker" target="_blank" class="sf-icon tg" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
+        </div>
+    </main>
+
+    <main id="view-analytics" class="hidden flex-col max-w-6xl mx-auto w-full my-3 px-2">
+        <div class="glass-card bg-slate-900/80 border-t-4 border-amber-500 p-4 md:p-6 rounded-2xl shadow-2xl">
+            <div class="flex flex-wrap justify-between items-center mb-6 gap-3">
+                <h2 class="text-xl md:text-2xl font-bold text-amber-400 poppins"><i class="fa-solid fa-chart-pie"></i> Deep Analytics</h2>
+                <div class="flex gap-2">
+                    <button onclick="exportData()" class="px-3 py-1.5 rounded-lg bg-blue-900/40 border border-blue-500 text-blue-300 hover:bg-blue-600 hover:text-white transition text-xs font-bold touch-manipulation"><i class="fa-solid fa-download"></i> Backup</button>
+                    <label class="px-3 py-1.5 rounded-lg bg-purple-900/40 border border-purple-500 text-purple-300 hover:bg-purple-600 hover:text-white transition text-xs font-bold cursor-pointer touch-manipulation">
+                        <i class="fa-solid fa-upload"></i> Restore
+                        <input type="file" id="import-file" class="hidden" accept=".json" onchange="importData(event)">
+                    </label>
+                    <button onclick="clearAllData()" class="px-3 py-1.5 rounded-lg bg-red-900/40 border border-red-500 text-red-300 hover:bg-red-600 hover:text-white transition text-xs font-bold touch-manipulation"><i class="fa-solid fa-trash"></i> Reset</button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                <div class="bg-black/40 p-3 rounded-xl border border-slate-700 text-center"><div class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Total Attempted</div><div class="text-2xl font-bold text-white" id="stat-attempted">0</div></div>
+                <div class="bg-black/40 p-3 rounded-xl border border-green-900/50 text-center"><div class="text-[10px] text-green-300 uppercase tracking-widest mb-1">Total Correct</div><div class="text-2xl font-bold text-green-400" id="stat-correct">0</div></div>
+                <div class="bg-black/40 p-3 rounded-xl border border-red-900/50 text-center"><div class="text-[10px] text-red-300 uppercase tracking-widest mb-1">Total Wrong</div><div class="text-2xl font-bold text-red-400" id="stat-wrong">0</div></div>
+                <div class="bg-black/40 p-3 rounded-xl border border-purple-900/50 text-center"><div class="text-[10px] text-purple-300 uppercase tracking-widest mb-1">Overall Accuracy</div><div class="text-2xl font-bold text-purple-400" id="stat-accuracy">0%</div></div>
+            </div>
+
+            <h3 class="text-lg font-bold text-white mb-3">Module History</h3>
+            <div class="overflow-x-auto rounded-lg border border-slate-700">
+                <table class="w-full text-left border-collapse min-w-[500px]">
+                    <thead>
+                        <tr class="bg-blue-900/20 text-blue-300 border-b-2 border-blue-500 text-sm">
+                            <th class="p-3">Date</th><th class="p-3 text-center">Module</th><th class="p-3 text-center">Correct</th><th class="p-3 text-center">Wrong</th><th class="p-3 text-center font-bold text-amber-400">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-300 text-sm" id="history-table-body">
+                        <!-- History injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- NEW: Summary View -->
+    <main id="view-summary" class="hidden flex-col max-w-6xl mx-auto w-full my-3 px-2">
+        <div class="glass-card bg-slate-900/80 border-t-4 border-purple-500 p-4 md:p-6 rounded-2xl shadow-2xl">
+            <h2 class="text-xl md:text-2xl font-bold text-purple-400 poppins mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-file-lines"></i> Repeated Question Summary
+            </h2>
+            <div id="summary-content" class="text-sm text-gray-300 leading-relaxed">
+                <!-- Content loaded here -->
+                <div id="summary-loading" class="text-center py-10">
+                    <i class="fa-solid fa-spinner fa-spin text-3xl text-purple-400"></i>
+                    <p class="mt-2 text-gray-400">Loading summary...</p>
+                </div>
+                <div id="summary-error" class="hidden text-center py-10 text-red-400">
+                    <i class="fa-solid fa-triangle-exclamation text-3xl"></i>
+                    <p class="mt-2">Could not load summary. Please ensure <code>Repeated.html</code> is in the same folder.</p>
+                    <button onclick="loadSummary()" class="mt-4 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 transition text-white font-bold">Retry</button>
+                </div>
+                <div id="summary-body" class="hidden"></div>
+            </div>
+        </div>
+    </main>
+
+    <main id="view-rules" class="hidden flex-col max-w-6xl mx-auto w-full my-3 px-2">
+        <div class="glass-card bg-slate-900/80 border-t-4 border-blue-500 p-4 md:p-6 rounded-2xl shadow-2xl text-sm text-gray-300 leading-relaxed">
+            <h2 class="text-xl md:text-2xl font-bold text-blue-400 mb-4 poppins text-center">App Modes & Navigation Guide</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="bg-blue-950/30 border border-blue-800 rounded-xl p-4">
+                    <h3 class="text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-stopwatch text-blue-400"></i> Practice Mode</h3>
+                    <p>Simulates real-world testing. Time-limited (120 minutes). Your score is evaluated upon final submission, but you get immediate visual feedback when selecting an option.</p>
+                    <div class="mt-2 text-xs font-mono bg-black/40 p-2 rounded text-center"><span class="text-green-400">+1 Mark</span> | <span class="text-gray-400">0 Negative</span></div>
+                </div>
+                <div class="bg-emerald-950/30 border border-emerald-800 rounded-xl p-4">
+                    <h3 class="text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-book-open text-emerald-400"></i> Study Mode</h3>
+                    <p>Designed for pure learning and revision. Correct answers are pre-highlighted. Access detailed explanations instantly via the "Expert Advice" button.</p>
+                    <div class="mt-2 text-xs font-mono bg-black/40 p-2 rounded text-center text-emerald-300">Untimed • No Scoring</div>
+                </div>
+            </div>
+
+            <h3 class="text-lg font-bold text-white mt-6 mb-3 border-b border-slate-700 pb-2">Features</h3>
+            <ul class="list-disc pl-5 space-y-2 text-gray-400">
+                <li><strong class="text-blue-300">Unified Palette:</strong> Use the grid icon in the footer to quickly see attempted, unattempted, and bookmarked questions.</li>
+                <li><strong class="text-blue-300">Swipe Navigation:</strong> Swipe left or right on your mobile screen to smoothly transition between questions.</li>
+                <li><strong class="text-blue-300">Offline Analytics:</strong> Your progress is saved securely in your browser. Use the Backup/Restore function in Analytics to sync across devices.</li>
+            </ul>
+        </div>
+    </main>
+
+    <main id="view-quiz" class="hidden flex-col max-w-6xl mx-auto w-full my-2 px-2 relative">
+        <div id="study-mode-banner" class="hidden bg-emerald-900/40 border border-emerald-500/50 text-emerald-300 px-4 py-2 rounded-xl mb-2 text-xs md:text-sm font-bold flex justify-between items-center">
+            <span><i class="fa-solid fa-book-open"></i> Study Mode Active</span>
+            <span class="font-normal opacity-80">Answers Pre-highlighted</span>
+        </div>
+
+        <div class="relative w-full">
+            <div class="glass-card bg-slate-900/95 border-t-2 border-blue-500 p-4 md:p-6 rounded-2xl shadow-xl">
+                <p id="question-text" class="text-[15px] md:text-[18px] font-medium text-gray-50 whitespace-pre-wrap w-full leading-relaxed" style="word-break: break-word;">Loading question...</p>
+            </div>
+        </div>
+        
+        <div id="options-grid" class="mt-3 grid grid-cols-1 gap-2.5 w-full">
+            <!-- Options injected here -->
+        </div>
+        
+        <div class="flex items-center justify-between mt-4 px-1 gap-2">
+            <label class="flex items-center gap-2 cursor-pointer touch-manipulation">
+                <input type="checkbox" id="mark-review-checkbox" onchange="toggleBookmark()" class="w-5 h-5 accent-amber-500 rounded cursor-pointer">
+                <span class="text-sm text-amber-400 font-medium"><i class="fa-solid fa-bookmark"></i> Bookmark</span>
+            </label>
+            
+            <button id="btn-expert-advice" onclick="showCurrentExplanation()" class="hidden px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-purple-900/50 transition transform active:scale-95 touch-manipulation">
+                <i class="fa-solid fa-lightbulb text-yellow-300"></i> Expert Advice
+            </button>
+        </div>
+    </main>
+
+    <footer id="quiz-footer" class="hidden mobile-sticky-footer">
+        <div class="max-w-6xl mx-auto w-full">
+            <div class="flex justify-between items-center px-4 pt-1.5 text-[10px] md:text-xs font-mono border-b border-white/5 pb-1.5">
+                <div id="footer-score-block" class="text-gray-400">Score: <span id="live-score-display" class="text-blue-400 font-bold text-sm">0</span></div>
+                <div id="footer-stats-block"><span class="text-green-400 font-bold">✓ <span id="live-correct">0</span></span> &nbsp; <span class="text-red-400 font-bold">✗ <span id="live-wrong">0</span></span></div>
+                <div class="text-white/60 font-bold bg-white/10 px-2 py-0.5 rounded-md" id="progress-counter">Q: 0/0</div>
+            </div>
+            <div class="flex justify-between items-center p-2.5 gap-2 md:gap-3">
+                <button onclick="prevQuestion()" class="flex-1 py-3 rounded-xl bg-slate-800 border border-slate-600 hover:bg-slate-700 text-sm font-semibold transition flex items-center justify-center gap-2 touch-manipulation">
+                    <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">Previous</span>
+                </button>
+                <button onclick="togglePalette()" class="flex-1 py-3 rounded-xl bg-blue-900/40 border border-blue-500 hover:bg-blue-800 text-blue-300 flex items-center justify-center transition shadow-lg shrink-0 touch-manipulation gap-2" aria-label="Question palette">
+                    <i class="fa-solid fa-table-cells"></i> <span class="hidden sm:inline font-bold">Palette</span>
+                </button>
+                <button onclick="nextQuestion()" class="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 border border-blue-400 text-white text-sm font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 touch-manipulation">
+                    <span class="hidden sm:inline">Next</span> <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <div id="palette-panel">
+        <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
+            <h3 class="text-lg font-bold text-white poppins">Question Palette</h3>
+            <button onclick="togglePalette()" class="w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-red-500/20 transition touch-manipulation">&times;</button>
+        </div>
+        <div class="flex gap-4 text-xs font-medium text-gray-300 mb-5 flex-wrap justify-center bg-black/40 p-3 rounded-xl">
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#1e293b] border border-[#475569]"></span> Unattempted</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#047857]"></span> Correct</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#991b1b]"></span> Wrong</span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-bookmark text-amber-400"></i> Bookmarked</span>
+        </div>
+        <div id="palette-grid" class="flex flex-wrap gap-2.5 justify-center">
+            <!-- Palette buttons injected here -->
+        </div>
+    </div>
+
+    <div id="explanation-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden" onclick="closeExplanation(event)">
+        <div class="glass-card bg-slate-900 border border-slate-600 rounded-2xl max-w-md w-full p-5 md:p-6 shadow-2xl overflow-y-auto max-h-[85vh] relative" onclick="event.stopPropagation()">
+            <button onclick="closeExplanation()" class="absolute top-3 right-3 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-gray-400 hover:text-white touch-manipulation"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="modal-title" class="text-xl font-bold flex items-center gap-2 mb-3 mt-1"></h2>
+            <div id="modal-subtitle" class="text-sm text-gray-200 leading-relaxed text-left" style="word-break: break-word;"></div>
+            <div class="pt-5 mt-4 border-t border-slate-700">
+                <button onclick="closeExplanationAndNext()" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-500 transition shadow-lg shadow-blue-600/30 text-sm touch-manipulation">Got it, Next Question <i class="fa-solid fa-arrow-right ml-1"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRAy0cnPqv6k1ckLp9wp9fRwh3kiMxZEHkEKTzPfDOKXOdfbxS3TdCWXzJZVTKydHUBEenaeUBYJsst/pub?output=csv';
+        const JSON_URL = 'mcq.json';
+
+        // Master Set Configurations — now with three entries
+        let setsData = [
+            { id: 'csv', title: 'Book MCQs', desc: 'Fetched live from Google Sheets', data: [] },
+            { id: 'json', title: 'Additional Syllabus MCQs', desc: 'Official JSON modules', data: [] },
+            { id: 'summary', title: 'Repeated Questions Summary', desc: 'Quick revision of repeated topics', data: [] }   // <-- NEW
+        ];
+
+        // Global State Variables
+        let currentSetIndex = 0;
+        let currentQIndex = 0;
+        let currentMode = 'practice'; // 'practice' or 'study'
+        let sessionState = []; 
+        let bookmarked = new Set();
+        let stats = { correct: 0, wrong: 0 };
+        let timerInterval;
+        let timeRemaining = 120 * 60; // 120 minutes
+        let isTestActive = false;
+        let soundEnabled = true;
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playBeep(freq, type, duration) {
+            if (!soundEnabled) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+        function soundCorrect() { playBeep(600, 'triangle', 0.12); setTimeout(() => playBeep(800, 'triangle', 0.18), 80); }
+        function soundWrong() { playBeep(250, 'sawtooth', 0.18); setTimeout(() => playBeep(200, 'sawtooth', 0.25), 120); }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high';
+                showToast('Sound ON');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark';
+                showToast('Sound OFF');
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        function showDialog(title, message, type = 'alert', onConfirm = null) {
+            const overlay = document.getElementById('custom-dialog-overlay');
+            document.getElementById('dialog-title').innerText = title;
+            document.getElementById('dialog-message').innerText = message;
+            
+            const btnContainer = document.getElementById('dialog-buttons');
+            btnContainer.innerHTML = '';
+            
+            if (type === 'confirm') {
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-bold flex-1 touch-manipulation';
+                cancelBtn.innerText = 'Cancel';
+                cancelBtn.onclick = () => overlay.classList.remove('active');
+                btnContainer.appendChild(cancelBtn);
+            }
+            
+            const okBtn = document.createElement('button');
+            okBtn.className = 'px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold flex-1 shadow-lg touch-manipulation';
+            okBtn.innerText = type === 'confirm' ? 'Confirm' : 'OK';
+            okBtn.onclick = () => {
+                overlay.classList.remove('active');
+                if (onConfirm) onConfirm();
+            };
+            btnContainer.appendChild(okBtn);
+            overlay.classList.add('active');
+        }
+
+        // CSV Parser
+        function parseCSV(text) {
+            const rows = text.split('\n').map(row => row.trim()).filter(row => row);
+            const headers = rows[0].split(',').map(h => h.trim());
+            const result = [];
+            
+            for (let i = 1; i < rows.length; i++) {
+                const values = rows[i].match(/(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^,]+))/g) || [];
+                const record = {};
+                for (let j = 0; j < headers.length; j++) {
+                    let val = values[j] ? values[j].trim() : "";
+                    if (val.startsWith('"') && val.endsWith('"')) {
+                        val = val.substring(1, val.length - 1).replace(/""/g, '"');
+                    }
+                    record[headers[j]] = val;
+                }
+                result.push(record);
+            }
+            return result;
+        }
+
+        function normalizeCSV(rows) {
+            return rows.map(r => {
+                let ans = String(r['Correct Answer'] || '').trim().toUpperCase();
+                let cIndex = ans.includes('A') ? 0 : ans.includes('B') ? 1 : ans.includes('C') ? 2 : ans.includes('D') ? 3 : 0;
+                return {
+                    question: r['Question'],
+                    options: [r['Option A'], r['Option B'], r['Option C'], r['Option D']],
+                    correctOption: cIndex,
+                    explanation: r['Explanation'] || "Explanation not provided in source."
+                };
+            }).filter(q => q.question);
+        }
+
+        function normalizeJSON(data) {
+            return data.map(item => {
+                if(!item.question) return null;
+                let ansStr = String(item.answer || '').toLowerCase();
+                let cIndex = ansStr.startsWith('a') ? 0 : ansStr.startsWith('b') ? 1 : ansStr.startsWith('c') ? 2 : ansStr.startsWith('d') ? 3 : 0;
+                return {
+                    question: item.question,
+                    options: [
+                        item.options?.a || "Option A", 
+                        item.options?.b || "Option B", 
+                        item.options?.c || "Option C", 
+                        item.options?.d || "Option D"
+                    ],
+                    correctOption: cIndex,
+                    explanation: item.explanation || "No explanation provided."
+                };
+            }).filter(q => q !== null);
+        }
+
+        async function fetchAllData() {
+            document.getElementById('loading-indicator').classList.remove('hidden');
+            
+            // 1. Fetch CSV
+            try {
+                const csvRes = await fetch(API_URL);
+                if (csvRes.ok) {
+                    const csvText = await csvRes.text();
+                    setsData[0].data = normalizeCSV(parseCSV(csvText));
+                }
+            } catch(e) { console.warn("CSV fetch failed, using fallback.", e); }
+
+            // 2. Fetch JSON
+            try {
+                if (window.location.protocol === 'blob:' || window.location.protocol === 'data:' || window.location.protocol === 'about:') {
+                    throw new Error("Relative fetch not supported in preview environments.");
+                }
+                const jsonRes = await fetch(JSON_URL);
+                if (jsonRes.ok) {
+                    const jsonData = await jsonRes.json();
+                    setsData[1].data = normalizeJSON(jsonData);
+                }
+            } catch(e) { 
+                console.log("Using fallback data for Additional Syllabus MCQs."); 
+                setsData[1].data = [
+                    {
+                        question: "What is the primary focus of forensic accounting?",
+                        options: ["Preparing financial statements", "Examining accounting records for potential crimes", "Tax planning", "Auditing"],
+                        correctOption: 1,
+                        explanation: "Forensic accounting involves investigating records for potential financial crimes."
+                    },
+                    {
+                        question: "Which of the following is NOT a phase of the standard audit process?",
+                        options: ["Planning", "Execution", "Marketing", "Reporting"],
+                        correctOption: 2,
+                        explanation: "Marketing is not a part of the standard financial audit process."
+                    }
+                ];
+            }
+
+            // Fallback for CSV if network blocked
+            if (setsData[0].data.length === 0) {
+                 setsData[0].data = [
+                     {
+                        question: "Under the Income Tax Act, 1961, which section deals with the deduction for life insurance premia?",
+                        options: ["Section 80C", "Section 80D", "Section 80G", "Section 80TTA"],
+                        correctOption: 0,
+                        explanation: "Section 80C provides deductions for specified investments like LIC, PPF, etc."
+                     }
+                 ];
+            }
+            
+            // Summary set has no data — it's a viewer
+            document.getElementById('loading-indicator').classList.add('hidden');
+        }
+
+        const DB_NAME = "CA_AITT_DB";
+        const DB_VERSION = 1;
+        
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(DB_NAME, DB_VERSION);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('progress')) db.createObjectStore('progress'); 
+                    if (!db.objectStoreNames.contains('history')) db.createObjectStore('history', { autoIncrement: true });
+                };
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+        
+        async function idbSet(storeName, key, val) {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readwrite');
+                tx.objectStore(storeName).put(val, key);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
+        }
+        
+        async function idbGet(storeName, key) {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const req = db.transaction(storeName, 'readonly').objectStore(storeName).get(key);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        async function idbAddHistory(record) {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction('history', 'readwrite');
+                tx.objectStore('history').add(record);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
+        }
+
+        async function idbGetAllHistory() {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const req = db.transaction('history', 'readonly').objectStore('history').getAll();
+                req.onsuccess = () => resolve(req.result || []);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        async function idbClearAll() {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(['progress', 'history'], 'readwrite');
+                tx.objectStore('progress').clear();
+                tx.objectStore('history').clear();
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
+        }
+
+        async function initApp() {
+            await fetchAllData();
+            renderSetCards();
+            showView('sets');
+            const savedState = await idbGet('progress', 'current');
+            if (savedState && savedState.isTestActive) {
+                showDialog('Resume Session', `You have an active ${savedState.mode} session on ${setsData[savedState.setIndex].title}. Continue?`, 'confirm', () => {
+                    resumeSession(savedState);
+                });
+            }
+            window.summaryLoaded = false;
+        }
+
+        function showView(viewId) {
+            if (isTestActive && viewId !== 'quiz') {
+                showDialog('Leave Session?', 'Your test is active. Exiting will pause the test, but you can resume it from the Dashboard.', 'confirm', () => {
+                    pauseSession();
+                    executeShowView(viewId);
+                });
+                return;
+            }
+            executeShowView(viewId);
+        }
+
+        function executeShowView(viewId) {
+            ['view-sets', 'view-analytics', 'view-rules', 'view-quiz', 'view-summary'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+                document.getElementById(id).classList.remove('flex');
+            });
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            document.getElementById(`view-${viewId}`).classList.add('flex');
+            
+            if (viewId === 'quiz') {
+                document.getElementById('main-tabs').classList.add('hidden');
+                document.getElementById('quiz-footer').classList.remove('hidden');
+                document.getElementById('quiz-footer').classList.add('mobile-sticky-footer');
+            } else {
+                document.getElementById('main-tabs').classList.remove('hidden');
+                document.getElementById('quiz-footer').classList.add('hidden');
+                document.getElementById('quiz-footer').classList.remove('mobile-sticky-footer');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                const activeTab = document.querySelector(`[data-tab="${viewId}"]`);
+                if(activeTab) activeTab.classList.add('active');
+            }
+            
+            if (viewId === 'analytics') renderAnalytics();
+            if (viewId === 'summary') loadSummary();
+            window.scrollTo(0,0);
+        }
+
+        function requestHome() {
+            if (isTestActive) {
+                showDialog('Warning', 'Exiting now will pause your session.', 'confirm', () => {
+                    pauseSession();
+                    executeShowView('sets');
+                });
+            } else {
+                executeShowView('sets');
+            }
+        }
+
+        // ─── Summary Loader ───
+        async function loadSummary() {
+            const loading = document.getElementById('summary-loading');
+            const error = document.getElementById('summary-error');
+            const body = document.getElementById('summary-body');
+            
+            if (window.summaryLoaded) {
+                loading.classList.add('hidden');
+                error.classList.add('hidden');
+                body.classList.remove('hidden');
+                return;
+            }
+            
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            body.classList.add('hidden');
+            
+            try {
+                const response = await fetch('Repeated.html');
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const bodyContent = doc.body;
+                bodyContent.querySelectorAll('script').forEach(s => s.remove());
+                body.innerHTML = bodyContent.innerHTML;
+                window.summaryLoaded = true;
+                loading.classList.add('hidden');
+                body.classList.remove('hidden');
+            } catch (err) {
+                console.warn('Summary load error:', err);
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+            }
+        }
+
+        async function renderSetCards() {
+            const grid = document.getElementById('set-cards-grid');
+            grid.innerHTML = '';
+            const history = await idbGetAllHistory();
+            const savedState = await idbGet('progress', 'current');
+
+            setsData.forEach((set, idx) => {
+                // Special handling for the summary card
+                if (set.id === 'summary') {
+                    grid.innerHTML += `
+                        <div class="set-card flex flex-col justify-between h-full border-purple-500/30">
+                            <div>
+                                <div class="text-xl md:text-2xl font-bold text-purple-400 poppins mb-1">${set.title}</div>
+                                <div class="text-xs text-gray-400 mb-2">${set.desc}</div>
+                                <div class="text-sm font-mono text-gray-300 mb-4"><i class="fa-regular fa-file-lines"></i> Quick reference</div>
+                            </div>
+                            <div class="flex gap-2 mt-auto">
+                                <button onclick="showView('summary')" class="btn-action btn-summary w-full"><i class="fa-solid fa-eye"></i> View Summary</button>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Regular MCQ sets
+                const setHistory = history.filter(h => h.set === idx);
+                let bestScore = -999;
+                setHistory.forEach(h => { if(h.score > bestScore) bestScore = h.score; });
+                
+                const isResumable = savedState && savedState.isTestActive && savedState.setIndex === idx;
+                const isCompleted = setHistory.length > 0;
+                const questionCount = set.data.length;
+
+                let badge = '';
+                if(isResumable) badge = '<div class="badge resume">Resume Session</div>';
+                else if(isCompleted) badge = '<div class="badge completed">Completed</div>';
+
+                grid.innerHTML += `
+                    <div class="set-card flex flex-col justify-between h-full">
+                        ${badge}
+                        <div>
+                            <div class="text-xl md:text-2xl font-bold text-blue-400 poppins mb-1">${set.title}</div>
+                            <div class="text-xs text-gray-400 mb-2">${set.desc}</div>
+                            <div class="text-sm font-mono text-gray-300 mb-4">${questionCount} Questions</div>
+                            ${isCompleted ? `<div class="text-sm font-semibold mb-3">Best Score: <span class="text-amber-400">${bestScore}</span></div>` : '<div class="h-8"></div>'}
+                        </div>
+                        <div class="flex gap-2 mt-auto">
+                            <button onclick="startSession(${idx}, 'practice')" ${questionCount === 0 ? 'disabled' : ''} class="btn-action btn-practice touch-manipulation disabled:opacity-50"><i class="fa-solid fa-stopwatch"></i> Practice</button>
+                            <button onclick="startSession(${idx}, 'study')" ${questionCount === 0 ? 'disabled' : ''} class="btn-action btn-study touch-manipulation disabled:opacity-50"><i class="fa-solid fa-book-open"></i> Study</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function startSession(setIdx, mode) {
+            const savedState = await idbGet('progress', 'current');
+            if (savedState && savedState.isTestActive && savedState.setIndex !== setIdx) {
+                showDialog('Start New?', `This will override your paused ${savedState.mode} session on ${setsData[savedState.setIndex].title}.`, 'confirm', () => {
+                    initNewSession(setIdx, mode);
+                });
+            } else if (savedState && savedState.isTestActive && savedState.setIndex === setIdx && savedState.mode === mode) {
+                resumeSession(savedState);
+            } else {
+                initNewSession(setIdx, mode);
+            }
+        }
+
+        function initNewSession(setIdx, mode) {
+            currentSetIndex = setIdx;
+            currentMode = mode;
+            currentQIndex = 0;
+            sessionState = new Array(setsData[setIdx].data.length).fill(null);
+            bookmarked = new Set();
+            stats = { correct: 0, wrong: 0 };
+            timeRemaining = 120 * 60;
+            isTestActive = true;
+            
+            setupQuizUI(mode);
+            executeShowView('quiz');
+            renderQuestion();
+            updateFooterStats();
+            saveProgress();
+        }
+
+        function resumeSession(state) {
+            currentSetIndex = state.setIndex;
+            currentMode = state.mode;
+            currentQIndex = state.qIndex;
+            sessionState = state.sessionState;
+            bookmarked = new Set(state.bookmarked);
+            stats = state.stats;
+            timeRemaining = state.timeRemaining;
+            isTestActive = true;
+
+            setupQuizUI(currentMode);
+            executeShowView('quiz');
+            renderQuestion();
+            updateFooterStats();
+        }
+
+        function setupQuizUI(mode) {
+            document.getElementById('header-subtitle').innerText = setsData[currentSetIndex].title;
+            const banner = document.getElementById('study-mode-banner');
+            const expertBtn = document.getElementById('btn-expert-advice');
+            const timerUI = document.getElementById('timer-display');
+            
+            if (mode === 'study') {
+                banner.classList.remove('hidden');
+                expertBtn.classList.remove('hidden');
+                timerUI.classList.add('opacity-50');
+                clearInterval(timerInterval);
+                timerUI.innerHTML = `<i class="fa-solid fa-infinity"></i> <span>Study</span>`;
+            } else {
+                banner.classList.add('hidden');
+                expertBtn.classList.add('hidden');
+                timerUI.classList.remove('opacity-50');
+                startTimer();
+            }
+        }
+
+        async function saveProgress() {
+            if (!isTestActive) return;
+            const state = {
+                isTestActive, setIndex: currentSetIndex, mode: currentMode,
+                qIndex: currentQIndex, sessionState, bookmarked: Array.from(bookmarked),
+                stats, timeRemaining, timestamp: Date.now()
+            };
+            await idbSet('progress', 'current', state);
+        }
+
+        async function pauseSession() {
+            isTestActive = false;
+            clearInterval(timerInterval);
+            await saveProgress();
+            renderSetCards();
+        }
+
+        function renderQuestion() {
+            const set = setsData[currentSetIndex].data;
+            const q = set[currentQIndex];
+            const isAnswered = sessionState[currentQIndex] !== null;
+
+            document.getElementById('progress-counter').innerText = `Q: ${currentQIndex + 1}/${set.length}`;
+            document.getElementById('question-text').innerHTML = `<span class="text-blue-400 font-bold poppins text-lg">Q${currentQIndex + 1}.</span> ${q.question}`;
+            document.getElementById('mark-review-checkbox').checked = bookmarked.has(currentQIndex);
+
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `opt-${idx}`;
+                const label = String.fromCharCode(65 + idx);
+                btn.innerHTML = `<span class="text-blue-400 font-bold w-6 text-left shrink-0">${label}.</span> <span>${opt}</span>`;
+                
+                if (currentMode === 'study') {
+                    btn.className = "option-btn opacity-90 cursor-default";
+                    if (idx === q.correctOption) {
+                        btn.classList.add('option-correct', 'opacity-100');
+                    }
+                } else {
+                    if (!isAnswered) {
+                        btn.className = "option-btn";
+                        btn.onclick = () => selectOption(idx);
+                    } else {
+                        btn.className = "option-btn opacity-80 cursor-default";
+                        if (idx === q.correctOption) btn.classList.add('option-correct', 'opacity-100');
+                        else if (idx === sessionState[currentQIndex].selected && !sessionState[currentQIndex].isCorrect) {
+                            btn.classList.add('option-wrong', 'opacity-100');
+                        }
+                    }
+                }
+                grid.appendChild(btn);
+            });
+            
+            renderPalette();
+            window.scrollTo(0,0);
+        }
+
+        function selectOption(idx) {
+            if (currentMode === 'study' || sessionState[currentQIndex] !== null) return;
+            
+            playBeep(300, 'sine', 0.08);
+            const q = setsData[currentSetIndex].data[currentQIndex];
+            const isCorrect = (idx === q.correctOption);
+            
+            sessionState[currentQIndex] = { selected: idx, isCorrect: isCorrect };
+            if (isCorrect) stats.correct++;
+            else stats.wrong++;
+            
+            updateFooterStats();
+            document.getElementById(`opt-${idx}`).classList.add('option-selected');
+            
+            setTimeout(() => {
+                const selectedBtn = document.getElementById(`opt-${idx}`);
+                const correctBtn = document.getElementById(`opt-${q.correctOption}`);
+                selectedBtn.classList.remove('option-selected');
+                
+                if (isCorrect) {
+                    selectedBtn.classList.add('option-correct');
+                    soundCorrect();
+                    showExplanationModal(true, q, idx);
+                } else {
+                    selectedBtn.classList.add('option-wrong');
+                    if (correctBtn) correctBtn.classList.add('option-correct');
+                    soundWrong();
+                    showExplanationModal(false, q, idx);
+                }
+                saveProgress();
+                renderPalette();
+            }, 300);
+        }
+
+        function toggleBookmark() {
+            if (bookmarked.has(currentQIndex)) bookmarked.delete(currentQIndex);
+            else bookmarked.add(currentQIndex);
+            renderPalette();
+            saveProgress();
+        }
+
+        function updateFooterStats() {
+            document.getElementById('live-correct').innerText = stats.correct;
+            document.getElementById('live-wrong').innerText = stats.wrong;
+            if(currentMode === 'practice') {
+                const finalScore = stats.correct;
+                document.getElementById('live-score-display').innerText = finalScore;
+            } else {
+                document.getElementById('live-score-display').innerText = '---';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQIndex < setsData[currentSetIndex].data.length - 1) {
+                currentQIndex++;
+                renderQuestion();
+                saveProgress();
+            } else {
+                showToast("End of Set");
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQIndex > 0) {
+                currentQIndex--;
+                renderQuestion();
+                saveProgress();
+            }
+        }
+
+        function jumpToQuestion(idx) {
+            currentQIndex = idx;
+            renderQuestion();
+            saveProgress();
+            document.getElementById('palette-panel').classList.remove('open');
+        }
+
+        let tsX = 0, tsY = 0;
+        window.addEventListener('touchstart', e => {
+            tsX = e.touches[0].clientX;
+            tsY = e.touches[0].clientY;
+        }, {passive: true});
+
+        window.addEventListener('touchend', e => {
+            if (!isTestActive) return;
+            const teX = e.changedTouches[0].clientX;
+            const teY = e.changedTouches[0].clientY;
+            const dx = teX - tsX;
+            const dy = teY - tsY;
+            
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                if(e.target.closest('#palette-panel') || e.target.closest('#explanation-modal') || e.target.closest('.toast')) return;
+                if (dx < 0) nextQuestion();
+                else prevQuestion();
+            }
+        }, {passive: true});
+
+        function showCurrentExplanation() {
+            const q = setsData[currentSetIndex].data[currentQIndex];
+            showExplanationModal(true, q, q.correctOption, true);
+        }
+
+        function showExplanationModal(isCorrect, q, selectedIdx, isStudyForce = false) {
+            const modal = document.getElementById('explanation-modal');
+            const title = document.getElementById('modal-title');
+            const subtitle = document.getElementById('modal-subtitle');
+            
+            if (isStudyForce) {
+                title.innerHTML = '<i class="fa-solid fa-lightbulb text-yellow-400"></i> <span class="text-yellow-400">Expert Advice</span>';
+                subtitle.innerHTML = `<div class="mb-2 font-bold text-blue-300">Answer: ${q.options[q.correctOption]}</div><div class="bg-black/50 p-4 rounded-xl border border-blue-500/30 text-gray-200"><b>Explanation:</b><br><br>${q.explanation}</div>`;
+            } else if (isCorrect) {
+                title.innerHTML = '<i class="fa-solid fa-circle-check text-green-400"></i> <span class="text-green-400">Correct! (+1)</span>';
+                subtitle.innerHTML = `<div class="bg-black/50 p-4 rounded-xl border border-green-500/30 text-gray-200"><b>Explanation:</b><br><br>${q.explanation}</div>`;
+            } else {
+                title.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i> <span class="text-red-500">Wrong! (0)</span>';
+                subtitle.innerHTML = `<div class="mb-3">Correct Answer: <span class="text-green-400 font-bold block mt-1">${q.options[q.correctOption]}</span></div><div class="bg-black/50 p-4 rounded-xl border border-red-500/30 text-gray-300"><b>Explanation:</b><br><br>${q.explanation}</div>`;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeExplanation(e) {
+            if(e && e.target !== document.getElementById('explanation-modal')) return;
+            document.getElementById('explanation-modal').classList.add('hidden');
+        }
+
+        function closeExplanationAndNext() {
+            closeExplanation();
+            nextQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            updateTimerUI();
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerUI();
+                if (timeRemaining % 30 === 0) saveProgress();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    showDialog('Time Up!', 'Your 120 minutes are over. Auto-submitting the test.', 'alert', () => forceSubmit());
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            const h = Math.floor(timeRemaining / 3600).toString().padStart(2, '0');
+            const m = Math.floor((timeRemaining % 3600) / 60).toString().padStart(2, '0');
+            const s = (timeRemaining % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').innerHTML = `<i class="fa-regular fa-clock"></i> <span>${h}:${m}:${s}</span>`;
+            if (timeRemaining <= 300) {
+                document.getElementById('timer-display').classList.add('animate-pulse');
+            } else {
+                document.getElementById('timer-display').classList.remove('animate-pulse');
+            }
+        }
+
+        function togglePalette() {
+            const p = document.getElementById('palette-panel');
+            p.classList.contains('open') ? p.classList.remove('open') : p.classList.add('open');
+        }
+
+        function renderPalette() {
+            const grid = document.getElementById('palette-grid');
+            grid.innerHTML = '';
+            const setLength = setsData[currentSetIndex].data.length;
+            
+            for (let i = 0; i < setLength; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'palette-btn';
+                btn.textContent = i + 1;
+                
+                if (i === currentQIndex) btn.classList.add('current');
+                if (bookmarked.has(i)) btn.classList.add('bookmarked');
+
+                if (currentMode === 'practice') {
+                    if (sessionState[i]) {
+                        if (sessionState[i].isCorrect) btn.classList.add('correct');
+                        else btn.classList.add('wrong');
+                    }
+                } else {
+                    if (sessionState[i]) btn.classList.add('answered'); 
+                }
+
+                btn.onclick = () => jumpToQuestion(i);
+                grid.appendChild(btn);
+            }
+        }
+
+        function requestSubmit() {
+            const unans = sessionState.filter(s => s === null).length;
+            let msg = currentMode === 'practice' 
+                ? `You have ${unans} unanswered questions. Submit and calculate score?`
+                : `Exit Study Mode and return to Dashboard?`;
+            
+            showDialog('Submit Test', msg, 'confirm', () => forceSubmit());
+        }
+
+        async function forceSubmit() {
+            isTestActive = false;
+            clearInterval(timerInterval);
+            document.getElementById('palette-panel').classList.remove('open');
+            
+            if (currentMode === 'practice') {
+                const finalScore = stats.correct;
+                const attempt = {
+                    date: new Date().toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' }),
+                    set: currentSetIndex,
+                    correct: stats.correct,
+                    wrong: stats.wrong,
+                    attempted: stats.correct + stats.wrong,
+                    score: finalScore
+                };
+                await idbAddHistory(attempt);
+                showDialog('Test Submitted!', `Score: ${finalScore}\nCorrect: ${stats.correct}\nWrong: ${stats.wrong}`, 'alert', () => {
+                    executeShowView('analytics');
+                });
+            } else {
+                executeShowView('sets');
+            }
+            
+            await idbSet('progress', 'current', null);
+            renderSetCards();
+        }
+
+        async function renderAnalytics() {
+            const history = await idbGetAllHistory();
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = '';
+            
+            let tCorrect = 0, tWrong = 0, tAttempted = 0;
+            
+            history.forEach(h => {
+                tCorrect += h.correct;
+                tWrong += h.wrong;
+                tAttempted += h.attempted;
+                
+                const label = setsData[h.set]?.title || `Module ${h.set + 1}`;
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                        <td class="p-3">${h.date}</td>
+                        <td class="p-3 text-center text-blue-300 font-bold">${label}</td>
+                        <td class="p-3 text-center text-green-400">${h.correct}</td>
+                        <td class="p-3 text-center text-red-400">${h.wrong}</td>
+                        <td class="p-3 text-center font-bold text-amber-400">${h.score}</td>
+                    </tr>
+                `;
+            });
+
+            if (history.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-5 text-center text-gray-500">No practice tests completed yet.</td></tr>';
+            }
+
+            document.getElementById('stat-attempted').innerText = tAttempted;
+            document.getElementById('stat-correct').innerText = tCorrect;
+            document.getElementById('stat-wrong').innerText = tWrong;
+            document.getElementById('stat-accuracy').innerText = tAttempted > 0 ? Math.round((tCorrect / tAttempted) * 100) + '%' : '0%';
+        }
+
+        async function exportData() {
+            const history = await idbGetAllHistory();
+            const state = await idbGet('progress', 'current');
+            const data = { history, state, exportDate: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `CA_AITT_Backup_${new Date().getTime()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Backup Exported!');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.history || data.state) {
+                        await idbClearAll();
+                        if (data.state) await idbSet('progress', 'current', data.state);
+                        if (data.history) {
+                            for(let h of data.history) await idbAddHistory(h);
+                        }
+                        showDialog('Success', 'Data restored successfully. Reloading view.', 'alert', () => {
+                            window.location.reload();
+                        });
+                    } else {
+                        showDialog('Error', 'Invalid Backup File format.', 'alert');
+                    }
+                } catch(err) {
+                    showDialog('Error', 'Failed to parse JSON file.', 'alert');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function clearAllData() {
+            showDialog('Critical Warning', 'This will delete ALL your history, progress, and scores. This cannot be undone.', 'confirm', async () => {
+                await idbClearAll();
+                window.location.reload();
+            });
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
